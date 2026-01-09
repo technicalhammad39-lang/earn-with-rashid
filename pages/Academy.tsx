@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Book, PlayCircle, Star, Brain, Lightbulb, Users, ArrowRight, Layers, Target, ChevronRight } from 'lucide-react';
+import { Book, PlayCircle, Star, Brain, Lightbulb, Layers, ChevronRight } from 'lucide-react';
 import { Course, SiteSettings } from '../types';
 
 const CATEGORIES = [
@@ -9,32 +9,6 @@ const CATEGORIES = [
   { id: 'basics', name: 'Trading ABC', icon: Lightbulb },
   { id: 'strategies', name: 'Master Strategies', icon: Star },
   { id: 'psychology', name: 'Mindset & Psychology', icon: Brain },
-];
-
-export const INITIAL_COURSES: Course[] = [
-  {
-    id: 'c1',
-    title: 'Institutional Price Action',
-    description: 'Learn how banks and hedge funds manipulate the markets and how to follow their footprints.',
-    category: 'strategies',
-    level: 'Beginner → Intermediate',
-    thumbnail: 'https://images.unsplash.com/photo-1611974717482-48092895b9b8?auto=format&fit=crop&q=80&w=600',
-    chapters: [
-      {
-        id: 'ch1',
-        title: 'Market Fundamentals',
-        lessons: [
-          { 
-            id: 'l1', 
-            title: 'Market Structure 101', 
-            content: 'Trading mein market structure sab se pehle hai. HL (Higher High) aur LH (Lower High) ko pehchan’na seekhein.', 
-            image: '', 
-            videoUrl: "https://www.youtube-nocookie.com/embed/Vyu6ZSzc_Ag" 
-          }
-        ]
-      }
-    ]
-  }
 ];
 
 const Academy = ({ courses, settings }: { courses: Course[], settings: SiteSettings }) => {

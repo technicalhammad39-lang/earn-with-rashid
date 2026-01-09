@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BrainCircuit } from 'lucide-react';
+import { Users } from 'lucide-react';
 
-const AIMentorWidget: React.FC = () => {
+const CommunityWidget: React.FC = () => {
   const navigate = useNavigate();
   const [position, setPosition] = useState({ x: 20, y: 100 });
   const [isDragging, setIsDragging] = useState(false);
@@ -15,7 +15,7 @@ const AIMentorWidget: React.FC = () => {
     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
     
     offsetRef.current = {
-      x: window.innerWidth - clientX - position.x,
+      x: clientX - position.x,
       y: window.innerHeight - clientY - position.y
     };
   };
@@ -25,7 +25,7 @@ const AIMentorWidget: React.FC = () => {
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
     
-    const newX = Math.max(10, Math.min(window.innerWidth - 60, window.innerWidth - clientX - offsetRef.current.x));
+    const newX = Math.max(10, Math.min(window.innerWidth - 60, clientX - offsetRef.current.x));
     const newY = Math.max(80, Math.min(window.innerHeight - 60, window.innerHeight - clientY - offsetRef.current.y));
 
     setPosition({ x: newX, y: newY });
@@ -59,7 +59,7 @@ const AIMentorWidget: React.FC = () => {
     <div 
       className="fixed z-[101] pointer-events-auto" 
       style={{ 
-        right: `${position.x}px`, 
+        left: `${position.x}px`, 
         bottom: `${position.y}px`,
       }}
     >
@@ -67,16 +67,16 @@ const AIMentorWidget: React.FC = () => {
         onMouseDown={startDragging}
         onTouchStart={startDragging}
         onClick={() => {
-          if (!isDragging) navigate('/mentor');
+          if (!isDragging) navigate('/community');
         }}
-        className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-2xl border-2 border-white/10 cursor-move hover:scale-110 transition-all relative"
-        title="Rashid AI Mentor"
+        className="w-14 h-14 bg-zinc-900 rounded-full flex items-center justify-center text-blue-500 shadow-2xl border-2 border-white/10 cursor-move hover:scale-110 transition-all relative"
+        title="Community Hub"
       >
-        <BrainCircuit size={28} />
-        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-zinc-950 animate-pulse"></div>
+        <Users size={28} />
+        <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-zinc-950 animate-pulse"></div>
       </button>
     </div>
   );
 };
 
-export default AIMentorWidget;
+export default CommunityWidget;

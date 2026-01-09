@@ -1,5 +1,5 @@
 
-export type MarketType = 'Forex' | 'Crypto' | 'Stocks';
+export type MarketType = 'Forex' | 'Crypto' | 'Stocks' | 'Binary Options';
 
 export interface User {
   id: string;
@@ -20,6 +20,7 @@ export interface User {
 export interface SiteSettings {
   brandName: string;
   logoText: string;
+  logoUrl: string;
   heroTitle: string;
   heroSubtitle: string;
   announcement: string;
@@ -86,6 +87,7 @@ export interface Signal {
   id: string;
   pair: string;
   type: 'BUY' | 'SELL';
+  market: MarketType;
   entry: string;
   tp: string;
   sl: string;

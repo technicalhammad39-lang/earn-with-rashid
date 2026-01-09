@@ -8,13 +8,12 @@ import {
   BrainCircuit, 
   ChevronDown, 
   Loader2,
-  CheckCircle2,
-  AlertTriangle,
-  History,
   Target,
   X,
-  Search,
-  Info
+  ShieldCheck,
+  Zap,
+  ChevronRight,
+  ShieldAlert
 } from 'lucide-react';
 
 declare const TradingView: any;
@@ -22,13 +21,9 @@ declare const TradingView: any;
 const PAIRS: MarketPair[] = [
   { symbol: 'BTCUSDT', name: 'Bitcoin', type: 'Crypto', price: 65420.50, change: 2.5 },
   { symbol: 'ETHUSDT', name: 'Ethereum', type: 'Crypto', price: 3450.12, change: -1.2 },
-  { symbol: 'SOLUSDT', name: 'Solana', type: 'Crypto', price: 145.40, change: 4.8 },
-  { symbol: 'XRPUSDT', name: 'XRP', type: 'Crypto', price: 0.62, change: 1.1 },
   { symbol: 'EURUSD', name: 'EUR / USD', type: 'Forex', price: 1.0850, change: 0.05 },
-  { symbol: 'GBPUSD', name: 'GBP / USD', type: 'Forex', price: 1.2640, change: -0.12 },
   { symbol: 'GOLD', name: 'Gold / USD', type: 'Forex', price: 2345.80, change: 0.35 },
   { symbol: 'AAPL', name: 'Apple Inc.', type: 'Stocks', price: 185.92, change: 0.8 },
-  { symbol: 'TSLA', name: 'Tesla Inc.', type: 'Stocks', price: 178.50, change: -2.4 },
 ];
 
 interface TradingProps {
@@ -49,7 +44,6 @@ const Trading: React.FC<TradingProps> = ({ balance, setBalance, positions, setPo
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [isChartReady, setIsChartReady] = useState(false);
-  const [showPairSelector, setShowPairSelector] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
   
   const [currentPrices, setCurrentPrices] = useState<Record<string, number>>(
@@ -59,67 +53,39 @@ const Trading: React.FC<TradingProps> = ({ balance, setBalance, positions, setPo
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<any>(null);
 
-  // Chart initialization
   useEffect(() => {
     let isActive = true;
-    let checkInterval: any = null;
-
     const createWidget = () => {
       if (!isActive || !chartContainerRef.current || typeof TradingView === 'undefined') return;
       if (chartContainerRef.current) chartContainerRef.current.innerHTML = '';
-
       try {
         widgetRef.current = new TradingView.widget({
           "autosize": true,
           "symbol": selectedPair.symbol,
           "interval": "60",
-          "timezone": "Etc/UTC",
           "theme": "dark",
           "style": "1",
           "locale": "en",
           "toolbar_bg": "#09090b",
-          "enable_publishing": false,
-          "hide_side_toolbar": true,
-          "allow_symbol_change": false,
           "container_id": chartContainerRef.current.id,
           "backgroundColor": "#09090b",
           "gridColor": "rgba(255, 255, 255, 0.05)",
-          "disabled_features": ["header_compare", "header_saveload", "header_settings", "header_undo_redo", "header_screenshot", "header_symbol_search"],
-          "enabled_features": ["header_indicators"],
-          "library_path": "https://s3.tradingview.com/tv.js"
+          "hide_side_toolbar": true,
         });
         setIsChartReady(true);
-      } catch (err) {
-        console.error("TradingView Widget fail:", err);
-      }
+      } catch (err) { console.error(err); }
     };
-
-    if (typeof TradingView !== 'undefined') {
-      createWidget();
-    } else {
-      checkInterval = setInterval(() => {
-        if (typeof TradingView !== 'undefined') {
-          createWidget();
-          clearInterval(checkInterval);
-        }
-      }, 100);
-    }
-
-    return () => {
-      isActive = false;
-      if (checkInterval) clearInterval(checkInterval);
-      setIsChartReady(false);
-    };
+    createWidget();
+    return () => { isActive = false; setIsChartReady(false); };
   }, [selectedPair.symbol]);
 
-  // Price Simulation
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentPrices(prev => {
         const next = { ...prev };
         PAIRS.forEach(p => {
           const move = (Math.random() - 0.5) * (next[p.symbol] * 0.0006);
-          next[p.symbol] = parseFloat((next[p.symbol] + move).toFixed(p.symbol.includes('USD') && !p.symbol.includes('USDT') ? 4 : 2));
+          next[p.symbol] = parseFloat((next[p.symbol] + move).toFixed(2));
         });
         return next;
       });
@@ -127,61 +93,8 @@ const Trading: React.FC<TradingProps> = ({ balance, setBalance, positions, setPo
     return () => clearInterval(interval);
   }, []);
 
-  // SL/TP Liquidation logic
-  const closePosition = useCallback((pos: Position, exitType: 'Manual' | 'SL' | 'TP' = 'Manual') => {
-    const currentPrice = currentPrices[pos.symbol];
-    if (!currentPrice) return;
-    
-    const diff = pos.type === 'Long' 
-      ? (currentPrice - pos.entryPrice) / pos.entryPrice 
-      : (pos.entryPrice - currentPrice) / pos.entryPrice;
-    
-    const pnl = pos.amount * diff * pos.leverage;
-    const finalReturn = pos.amount + pnl;
-
-    const trade: TradeHistory = {
-      id: pos.id,
-      symbol: pos.symbol,
-      type: pos.type,
-      entryPrice: pos.entryPrice,
-      exitPrice: currentPrice,
-      amount: pos.amount,
-      leverage: pos.leverage,
-      pnl,
-      timestamp: Date.now(),
-      exitType
-    };
-
-    setHistory(prev => [trade, ...prev]);
-    setPositions(prev => prev.filter(p => p.id !== pos.id));
-    setBalance(prev => prev + (finalReturn < 0 ? 0 : finalReturn));
-  }, [currentPrices, setHistory, setPositions, setBalance]);
-
-  useEffect(() => {
-    positions.forEach(pos => {
-      const price = currentPrices[pos.symbol];
-      if (!price) return;
-
-      let triggered = false;
-      let exitType: 'SL' | 'TP' = 'SL';
-
-      if (pos.type === 'Long') {
-        if (pos.sl && price <= pos.sl) { triggered = true; exitType = 'SL'; }
-        if (pos.tp && price >= pos.tp) { triggered = true; exitType = 'TP'; }
-      } else {
-        if (pos.sl && price >= pos.sl) { triggered = true; exitType = 'SL'; }
-        if (pos.tp && price <= pos.tp) { triggered = true; exitType = 'TP'; }
-      }
-
-      if (triggered) {
-        closePosition(pos, exitType);
-      }
-    });
-  }, [currentPrices, positions, closePosition]);
-
   const handleOpenPosition = (type: 'Long' | 'Short') => {
     if (amount <= 0 || amount > balance) return alert("Invalid amount or insufficient balance.");
-    
     const newPosition: Position = {
       id: Math.random().toString(36).substr(2, 9),
       symbol: selectedPair.symbol,
@@ -193,7 +106,6 @@ const Trading: React.FC<TradingProps> = ({ balance, setBalance, positions, setPo
       tp: tp ? parseFloat(tp) : undefined,
       timestamp: Date.now(),
     };
-
     setPositions(prev => [newPosition, ...prev]);
     setBalance(prev => prev - amount);
     setSl(''); setTp('');
@@ -202,12 +114,12 @@ const Trading: React.FC<TradingProps> = ({ balance, setBalance, positions, setPo
   const fetchAIAnalysis = async () => {
     setAnalyzing(true);
     setShowAiModal(true);
+    setAiAnalysis(null);
     try {
       const result = await analyzeMarket(selectedPair.symbol, selectedPair.type);
       setAiAnalysis(result);
     } catch (e) {
-      console.error(e);
-      setAiAnalysis({ rating: 'Error', explanationUrdu: 'Failed to connect' });
+      setAiAnalysis({ rating: 'Error', explanationUrdu: 'Connection failed.' });
     } finally {
       setAnalyzing(false);
     }
@@ -215,105 +127,135 @@ const Trading: React.FC<TradingProps> = ({ balance, setBalance, positions, setPo
 
   return (
     <div className="space-y-6 pb-12 animate-in fade-in duration-500">
-      {/* Top Simplified Actions */}
       <div className="flex items-center gap-4">
-         <button 
-           onClick={() => setShowPairSelector(true)}
-           className="flex-1 bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between hover:border-blue-500 transition-all shadow-xl"
-         >
+         <div className="flex-1 bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between shadow-xl">
             <div className="flex items-center gap-3">
-               <div className="w-10 h-10 bg-blue-600/10 rounded-xl flex items-center justify-center text-blue-500">
-                  <TrendingUp size={20} />
-               </div>
-               <div className="text-left">
-                  <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Selected Instrument</p>
+               <div className="w-10 h-10 bg-blue-600/10 rounded-xl flex items-center justify-center text-blue-500"><TrendingUp size={20} /></div>
+               <div>
+                  <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Active Pair</p>
                   <p className="text-sm font-black">{selectedPair.symbol}</p>
                </div>
             </div>
-            <ChevronDown size={14} className="text-zinc-500" />
-         </button>
-
-         <button 
-           onClick={fetchAIAnalysis}
-           className="w-16 h-16 sm:w-auto sm:px-8 bg-blue-600 hover:bg-blue-700 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-900/30 active:scale-95 group"
-         >
-            <BrainCircuit size={24} className="group-hover:rotate-12 transition-transform" />
+         </div>
+         <button onClick={fetchAIAnalysis} className="px-8 py-5 bg-blue-600 hover:bg-blue-700 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-900/30 active:scale-95 group">
+            <BrainCircuit size={24} />
             <span className="hidden sm:block text-[10px] font-black uppercase tracking-[0.2em]">Rashid AI Analyzer</span>
          </button>
       </div>
 
-      {/* Main Terminal Grid */}
-      <div className="grid lg:grid-cols-12 gap-6 items-start">
+      <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 glass rounded-3xl overflow-hidden min-h-[520px] border-zinc-800 relative bg-zinc-950 shadow-2xl">
           {!isChartReady && (
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10 gap-3 bg-zinc-950">
               <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
-              <p className="text-[10px] text-zinc-500 font-black uppercase tracking-[0.3em]">Syncing Terminal...</p>
+              <p className="text-[10px] text-zinc-500 font-black uppercase tracking-[0.3em]">Loading Terminal...</p>
             </div>
           )}
           <div id="tv_chart_container" ref={chartContainerRef} className="w-full h-[520px]" />
         </div>
 
-        {/* Trade Panel */}
         <div className="lg:col-span-4 space-y-4">
            <div className="glass p-6 rounded-3xl bg-gradient-to-br from-blue-600/20 to-zinc-950 border-blue-500/20 shadow-xl">
-              <p className="text-[10px] font-black text-zinc-500 uppercase flex items-center gap-1 tracking-widest mb-1"><Wallet size={12}/> Paper Trading Equity</p>
-              <p className="text-3xl font-bold tracking-tight font-mono">${balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Available Equity</p>
+              <p className="text-3xl font-bold tracking-tight font-mono">${balance.toLocaleString()}</p>
            </div>
-
            <div className="glass p-6 rounded-3xl space-y-5 border-zinc-800 shadow-xl">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-                   <span>Order Margin (USDT)</span>
-                   <button onClick={() => setAmount(Math.floor(balance))} className="text-blue-500 hover:text-blue-400">MAX</button>
-                </div>
-                <input 
-                  type="number" value={amount} onChange={e => setAmount(Number(e.target.value))}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-blue-500 font-bold font-mono text-sm"
-                />
-              </div>
-
+              <input type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-blue-500 font-bold" placeholder="Margin" />
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                   <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Stop Loss (SL)</p>
-                   <input 
-                    type="number" value={sl} onChange={e => setSl(e.target.value)} placeholder="0.00"
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2.5 outline-none focus:border-red-500 text-xs font-mono"
-                   />
-                </div>
-                <div className="space-y-2">
-                   <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Take Profit (TP)</p>
-                   <input 
-                    type="number" value={tp} onChange={e => setTp(e.target.value)} placeholder="0.00"
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2.5 outline-none focus:border-green-500 text-xs font-mono"
-                   />
-                </div>
+                 <input type="number" value={sl} onChange={e => setSl(e.target.value)} placeholder="SL" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 outline-none focus:border-red-500 text-xs" />
+                 <input type="number" value={tp} onChange={e => setTp(e.target.value)} placeholder="TP" className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 outline-none focus:border-green-500 text-xs" />
               </div>
-
-              <div className="space-y-3">
-                <div className="flex justify-between text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-                  <span>Multiplier: {leverage}x</span>
-                </div>
-                <input 
-                  type="range" min="1" max="100" value={leverage} onChange={e => setLeverage(Number(e.target.value))}
-                  className="w-full accent-blue-600 h-1.5 bg-zinc-800 rounded-lg cursor-pointer"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <button onClick={() => handleOpenPosition('Long')} className="py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold transition-all shadow-lg active:scale-95 flex flex-col items-center">
-                   <span className="text-[10px] font-black uppercase tracking-widest opacity-80">BUY</span>
-                   <span className="text-lg">Long</span>
-                </button>
-                <button onClick={() => handleOpenPosition('Short')} className="py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold transition-all shadow-lg active:scale-95 flex flex-col items-center">
-                   <span className="text-[10px] font-black uppercase tracking-widest opacity-80">SELL</span>
-                   <span className="text-lg">Short</span>
-                </button>
+              <div className="grid grid-cols-2 gap-3">
+                <button onClick={() => handleOpenPosition('Long')} className="py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold transition-all shadow-lg active:scale-95">Long</button>
+                <button onClick={() => handleOpenPosition('Short')} className="py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold transition-all shadow-lg active:scale-95">Short</button>
               </div>
            </div>
         </div>
       </div>
-      {/* ... rest of component ... */}
+
+      {showAiModal && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-zinc-950/90 backdrop-blur-md animate-in fade-in duration-300">
+           <div className="w-full max-w-xl glass rounded-[2.5rem] border-zinc-800 p-0 shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh]">
+              {/* Header */}
+              <div className="p-8 border-b border-zinc-800 bg-zinc-900/50 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-blue-900/40">
+                      <BrainCircuit size={24} />
+                   </div>
+                   <div>
+                      <h2 className="text-xl font-black uppercase tracking-tight">AI Analyzer</h2>
+                      <p className="text-blue-500 text-[9px] font-black uppercase tracking-[0.3em]">Max Accuracy Logic</p>
+                   </div>
+                </div>
+                <button onClick={() => setShowAiModal(false)} className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-white transition-all"><X size={20}/></button>
+              </div>
+              
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-8 no-scrollbar space-y-8">
+                {analyzing ? (
+                   <div className="py-12 flex flex-col items-center justify-center gap-6">
+                      <div className="relative">
+                        <Loader2 className="w-16 h-16 text-blue-500 animate-spin" />
+                        <BrainCircuit size={24} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-400" />
+                      </div>
+                      <div className="space-y-3 text-center">
+                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Scanning Market Structure...</p>
+                         <p className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600 animate-pulse">Calculating High-Accuracy Entry...</p>
+                      </div>
+                   </div>
+                ) : aiAnalysis && (
+                  <div className="space-y-8 animate-in slide-in-from-bottom-6 duration-500">
+                     {/* Accuracy & Rating Grid */}
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="p-5 bg-zinc-900/50 border border-zinc-800 rounded-3xl">
+                           <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1">Mentor Rating</p>
+                           <p className={`text-xl font-black ${aiAnalysis.rating?.includes('Buy') ? 'text-green-500' : 'text-red-500'}`}>{aiAnalysis.rating}</p>
+                        </div>
+                        <div className="p-5 bg-zinc-900/50 border border-zinc-800 rounded-3xl">
+                           <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1">Confidence</p>
+                           <p className="text-xl font-black text-blue-500">{aiAnalysis.confidence}%</p>
+                        </div>
+                     </div>
+
+                     {/* Levels Grid */}
+                     <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2 p-5 bg-blue-600/5 rounded-3xl border border-blue-500/10">
+                           <p className="text-[9px] font-black text-blue-500 uppercase flex items-center gap-2 tracking-widest"><Target size={12}/> Entry Zone</p>
+                           <p className="font-bold text-sm text-zinc-100 font-mono">{aiAnalysis.entryZone}</p>
+                        </div>
+                        <div className="space-y-2 p-5 bg-green-600/5 rounded-3xl border border-green-500/10">
+                           <p className="text-[9px] font-black text-green-500 uppercase flex items-center gap-2 tracking-widest"><Zap size={12}/> Target Levels</p>
+                           <p className="font-bold text-sm text-zinc-100 font-mono">{aiAnalysis.targets}</p>
+                        </div>
+                     </div>
+
+                     {/* Urdu Explanation */}
+                     <div className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-[2rem] space-y-3 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-1 h-full bg-blue-600"></div>
+                        <div className="flex items-center gap-2 text-blue-500">
+                           <ShieldCheck size={18} />
+                           <p className="text-[9px] font-black uppercase tracking-widest">Mentor Logic (Short & Precise)</p>
+                        </div>
+                        <p className="text-[13px] text-zinc-300 leading-relaxed font-medium italic">"{aiAnalysis.explanationUrdu}"</p>
+                     </div>
+
+                     <div className="p-4 bg-yellow-500/5 border border-yellow-500/10 rounded-2xl flex items-start gap-3">
+                        <ShieldAlert size={16} className="text-yellow-600 shrink-0 mt-0.5" />
+                        <p className="text-[9px] text-zinc-500 font-medium leading-relaxed">This analysis is based on Rashid's institutional models. Always use stop loss in live trading.</p>
+                     </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="p-6 bg-zinc-950/80 border-t border-zinc-800 shrink-0">
+                 <button onClick={() => setShowAiModal(false)} className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl transition-all active:scale-[0.98]">
+                    Confirm Logic
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
     </div>
   );
 };
