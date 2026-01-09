@@ -16,7 +16,8 @@ import {
   ChevronRight,
   Globe,
   Award,
-  Verified
+  Verified,
+  ExternalLink
 } from 'lucide-react';
 import { SiteSettings } from '../types';
 
@@ -74,11 +75,11 @@ const Home = ({ settings }: { settings: SiteSettings }) => {
             </div>
             
             <h1 className="text-4xl md:text-6xl font-black leading-[1.1] mb-6 tracking-tight text-white">
-              {settings.heroTitle}
+              Empowering <span className="text-blue-500 underline decoration-blue-500/30 underline-offset-8">Financial Freedom</span>
             </h1>
             
             <p className="text-base md:text-lg text-zinc-400 mb-10 leading-relaxed font-medium">
-              {settings.heroSubtitle}
+              Join Rashid Academy and master institutional price action. Trade like the banks, manage risk like a pro, and start your journey with a real-time simulator.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -86,7 +87,7 @@ const Home = ({ settings }: { settings: SiteSettings }) => {
                 Start Learning <BookOpen size={18} />
               </Link>
               <Link to="/trading" className="px-10 py-5 bg-zinc-900 hover:bg-zinc-800 text-zinc-100 rounded-2xl border border-zinc-800 font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-3 active:scale-95 shadow-lg">
-                Try Paper Trading <PlayCircle size={18} />
+                Try Live Trading <PlayCircle size={18} />
               </Link>
             </div>
           </div>
@@ -111,10 +112,10 @@ const Home = ({ settings }: { settings: SiteSettings }) => {
           />
           <FeatureCard 
             icon={BarChart2} 
-            title="Real-time Paper Trading" 
-            desc="Practice your strategies on a high-fidelity simulator synced with global liquidity providers. No real risk, maximum experience."
+            title="Real-time Trading Terminal" 
+            desc="Practice your strategies on a high-fidelity simulator synced with global market movements. Fully real-time logic."
             link="/trading"
-            linkText="Start Practicing"
+            linkText="Launch Terminal"
           />
           <FeatureCard 
             icon={BrainCircuit} 
@@ -124,6 +125,20 @@ const Home = ({ settings }: { settings: SiteSettings }) => {
             linkText="Check Stats"
           />
         </div>
+      </section>
+
+      {/* Development Credit Section */}
+      <section className="py-20 border-t border-zinc-800/50 text-center">
+         <p className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.4em] mb-4">Masterpiece Engineered By</p>
+         <a 
+           href="https://maps.app.goo.gl/3XyVv8Jk8vXv5zXN8" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           className="group inline-flex items-center gap-3 px-8 py-4 bg-zinc-900 border border-zinc-800 rounded-3xl hover:border-blue-500 transition-all duration-500 shadow-2xl"
+         >
+           <span className="text-lg font-black tracking-tight text-white group-hover:text-blue-500 transition-colors">Developed by <span className="text-blue-500 underline decoration-blue-500/30 underline-offset-4">Hammad – Clyro Tech Solutions</span></span>
+           <ExternalLink size={18} className="text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+         </a>
       </section>
     </div>
   );

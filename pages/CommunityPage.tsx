@@ -10,7 +10,8 @@ import {
   Loader2,
   Send,
   Camera,
-  X
+  X,
+  ExternalLink
 } from 'lucide-react';
 import { User } from '../types';
 
@@ -196,6 +197,20 @@ const CommunityPage: React.FC<{ user: User }> = ({ user }) => {
                  <li>No spam or irrelevant marketing.</li>
                  <li>Share charts with logical analysis.</li>
               </ul>
+           </div>
+
+           {/* Branding Sidebar */}
+           <div className="p-8 bg-zinc-900/50 border border-zinc-800 rounded-[2.5rem] text-center space-y-4">
+              <p className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Infrastructure Support</p>
+              <a 
+                href="https://maps.app.goo.gl/3XyVv8Jk8vXv5zXN8" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="group flex flex-col items-center gap-2"
+              >
+                <span className="text-xs font-black tracking-tighter text-zinc-400 group-hover:text-blue-500 transition-colors">Clyro Tech Solutions</span>
+                <ExternalLink size={14} className="text-zinc-700 group-hover:text-blue-500" />
+              </a>
            </div>
         </div>
       </div>

@@ -53,7 +53,7 @@ export async function getLessonQA(question: string, context: string) {
   Reply as a friendly trading teacher named Rashid. 
   Language: Simple Roman Urdu. 
   Tone: Encouraging, authoritative yet easy. 
-  Avoid complex jargon unless explaining it. Keep it short.`;
+  Avoid complex jargon unless explaining it. Keep it short. Minimum messages.`;
 
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',

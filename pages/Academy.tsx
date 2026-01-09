@@ -22,8 +22,15 @@ const Academy = ({ courses, settings }: { courses: Course[], settings: SiteSetti
     <div className="space-y-10 py-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black tracking-tight mb-2 uppercase">{settings.brandName} Academy</h1>
-          <p className="text-zinc-500 font-medium">{settings.announcement}</p>
+          <h1 className="text-4xl font-bold tracking-tight mb-4 uppercase">
+            <span className="text-zinc-100">
+              {settings.brandName}
+            </span> 
+            <span className="ml-3 text-blue-500 underline decoration-blue-700 underline-offset-[12px] decoration-4">
+              Academy
+            </span>
+          </h1>
+          <p className="text-zinc-500 font-medium mt-4">{settings.announcement}</p>
         </div>
       </div>
 
@@ -32,7 +39,7 @@ const Academy = ({ courses, settings }: { courses: Course[], settings: SiteSetti
           <button 
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
-            className={`flex items-center gap-2 px-6 py-3 rounded-2xl border transition-all whitespace-nowrap text-[10px] font-black uppercase tracking-widest ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-2xl border transition-all whitespace-nowrap text-[10px] font-bold uppercase tracking-widest ${
               selectedCategory === cat.id 
                 ? 'bg-blue-600 border-blue-500 text-white shadow-lg' 
                 : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300'
@@ -55,7 +62,7 @@ const Academy = ({ courses, settings }: { courses: Course[], settings: SiteSetti
                <img src={course.thumbnail} className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" alt={course.title} />
                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent"></div>
                <div className="absolute bottom-4 left-4">
-                  <span className="px-3 py-1 bg-blue-600 text-white text-[8px] font-black uppercase tracking-widest rounded-lg">
+                  <span className="px-3 py-1 bg-blue-600 text-white text-[8px] font-bold uppercase tracking-widest rounded-lg">
                     {course.level}
                   </span>
                </div>
@@ -68,7 +75,7 @@ const Academy = ({ courses, settings }: { courses: Course[], settings: SiteSetti
                     <Layers size={14} />
                     <span className="text-[10px] font-bold uppercase">{course.chapters.length} Chapters</span>
                  </div>
-                 <div className="text-blue-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">
+                 <div className="text-blue-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">
                     Start Learning <ChevronRight size={14} />
                  </div>
               </div>

@@ -19,7 +19,9 @@ import {
   TrendingUp,
   X,
   PlayCircle,
-  FileText
+  FileText,
+  Lock,
+  ArrowRight
 } from 'lucide-react';
 import { User, Course, Signal, SiteSettings, Chapter, Lesson, MarketType } from '../types';
 
@@ -38,21 +40,53 @@ const Admin: React.FC<AdminProps> = ({ user, settings, setSettings, courses, set
   const [notification, setNotification] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
+  
+  // Local authorization state for the Admin Portal
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [adminPass, setAdminPass] = useState('');
 
-  // Unauthorized Gate
-  if (user.role !== 'admin') {
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Using a standard default access key for the admin portal
+    if (adminPass === 'rashid786' || user.role === 'admin') {
+      setIsAuthorized(true);
+    } else {
+      alert("Invalid Access Key");
+    }
+  };
+
+  if (!isAuthorized && user.role !== 'admin') {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
-        <div className="w-20 h-20 bg-red-600/10 rounded-3xl flex items-center justify-center text-red-500 mb-6 shadow-2xl">
-          <ShieldAlert size={40} className="animate-pulse" />
+      <div className="min-h-[80vh] flex items-center justify-center p-4 animate-in fade-in zoom-in-95 duration-500">
+        <div className="w-full max-w-md glass rounded-[3rem] border-zinc-800 p-8 md:p-12 shadow-2xl space-y-8 text-center bg-zinc-950/40">
+           <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-blue-900/40">
+                <Lock size={32} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black uppercase tracking-tight">Admin Portal</h1>
+                <p className="text-[10px] text-zinc-500 font-black uppercase tracking-[0.3em] mt-1 italic">Identity Verification Required</p>
+              </div>
+           </div>
+
+           <form onSubmit={handleAdminLogin} className="space-y-4">
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                <input 
+                  type="password" 
+                  placeholder="Enter Admin Access Key" 
+                  value={adminPass}
+                  onChange={(e) => setAdminPass(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all font-medium text-sm text-white"
+                />
+              </div>
+              <button type="submit" className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl active:scale-95">
+                Verify & Enter <ArrowRight size={18} />
+              </button>
+           </form>
+           
+           <p className="text-[9px] text-zinc-600 font-black uppercase tracking-widest">Authorized Access Only</p>
         </div>
-        <h1 className="text-3xl font-black uppercase tracking-tight mb-2">Access Denied</h1>
-        <p className="text-zinc-500 max-w-sm mb-8 font-medium italic">
-          Yeh area sirf Rashid Mentor aur Authorized Staff ke liye hai.
-        </p>
-        <button onClick={() => window.location.href = '#/'} className="px-8 py-4 bg-zinc-900 border border-zinc-800 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-100 hover:bg-zinc-800 transition-all active:scale-95">
-          Take Me Home
-        </button>
       </div>
     );
   }
@@ -68,6 +102,7 @@ const Admin: React.FC<AdminProps> = ({ user, settings, setSettings, courses, set
     setSettings({
       brandName: formData.get('brandName') as string,
       logoText: formData.get('logoText') as string,
+      logoUrl: settings.logoUrl,
       heroTitle: formData.get('heroTitle') as string,
       heroSubtitle: formData.get('heroSubtitle') as string,
       announcement: formData.get('announcement') as string,
@@ -105,7 +140,6 @@ const Admin: React.FC<AdminProps> = ({ user, settings, setSettings, courses, set
     }
   };
 
-  // Add 'market' property to newSignal to fix the reported error.
   const handleSaveSignal = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -370,7 +404,6 @@ const Admin: React.FC<AdminProps> = ({ user, settings, setSettings, courses, set
                            <option value="SELL">SELL</option>
                         </select>
                       </div>
-                      {/* Added 'market' selection to fix missing 'market' property in Signal type */}
                       <div className="space-y-2">
                         <label className="text-[10px] font-black text-zinc-500 uppercase">Market</label>
                         <select name="market" className="w-full bg-zinc-900 border border-zinc-800 p-4 rounded-xl font-bold">

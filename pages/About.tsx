@@ -1,9 +1,9 @@
 
 import React, { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Building, UserCheck, Users, Target, ShieldCheck, Award, Zap, Heart } from 'lucide-react';
+import { Building, UserCheck, Users, Target, ShieldCheck, Award, Zap, Heart, ExternalLink } from 'lucide-react';
 
-const RASHID_IMG = "https://i.ibb.co/9kx3Yg31/rashid-portrait.jpg"; // Using a placeholder for the provided image description: Smiling man with green candles background
+const RASHID_IMG = "https://i.ibb.co/9kx3Yg31/rashid-portrait.jpg";
 
 const About = () => {
   const { search } = useLocation();
@@ -55,7 +55,7 @@ const About = () => {
                 <div className="space-y-6">
                   <h2 className="text-3xl font-black tracking-tight">Earn with Rashid</h2>
                   <p className="text-zinc-400 leading-relaxed">
-                    Under the visionary leadership of Rashid Ali and technical excellence of our partners at ClyroTech, we have built a platform that bridges the gap between traditional finance and modern algorithmic trading.
+                    Under the visionary leadership of Rashid Ali and technical excellence of our partners at <span className="text-blue-500 font-bold">Clyro Tech Solutions</span>, we have built a platform that bridges the gap between traditional finance and modern algorithmic trading.
                   </p>
                   <p className="text-zinc-400 leading-relaxed">
                     Our mission is to educate 100,000 traders across Pakistan with professional-grade tools and mentor-style guidance in Roman Urdu.
@@ -106,11 +106,6 @@ const About = () => {
                   <p className="text-zinc-400 leading-relaxed">
                     As the Founder of Earn with Rashid, he has single-handedly transformed how trading is taught in Pakistan, moving away from gambling and towards institutional-level analysis and risk management.
                   </p>
-                  <div className="pt-4 flex flex-wrap gap-4">
-                    <span className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-400">Master Mentor</span>
-                    <span className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-400">Founder</span>
-                    <span className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-400">Macro Specialist</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -123,7 +118,13 @@ const About = () => {
                 {[
                   { name: 'Rashid Ali', role: 'Founder & Senior Expert Trader', status: 'Mentor', img: RASHID_IMG },
                   { name: 'Muhammad Ali', role: 'Senior Trading Expert', status: 'Professional', img: 'https://i.pravatar.cc/150?u=ma1' },
-                  { name: 'Hammad', role: 'Junior Associate & Developer', status: 'Learner / Student', img: 'https://i.pravatar.cc/150?u=h1' },
+                  { 
+                    name: 'Clyro Tech Solutions', 
+                    role: 'Development Agency', 
+                    status: 'Tech Partner', 
+                    img: 'https://i.ibb.co/hR99H2Wv/logo-rashid.png',
+                    link: 'https://maps.app.goo.gl/3XyVv8Jk8vXv5zXN8'
+                  },
                 ].map(member => (
                   <div key={member.name} className="p-8 rounded-3xl bg-zinc-900/50 border border-zinc-800 flex flex-col items-center text-center group hover:bg-zinc-900 transition-all shadow-xl">
                     <div className="relative mb-6">
@@ -134,7 +135,13 @@ const About = () => {
                     </div>
                     <h4 className="text-xl font-bold">{member.name}</h4>
                     <p className="text-[10px] text-blue-500 font-black uppercase tracking-[0.2em] mt-1">{member.role}</p>
-                    <div className="mt-4 px-3 py-1 bg-zinc-800 rounded-full text-[9px] font-black text-zinc-500 uppercase tracking-widest">{member.status}</div>
+                    {member.link ? (
+                      <a href={member.link} target="_blank" rel="noopener noreferrer" className="mt-4 px-3 py-1 bg-blue-600/10 text-blue-500 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1 hover:bg-blue-600 hover:text-white transition-all">
+                        Visit Agency <ExternalLink size={10} />
+                      </a>
+                    ) : (
+                      <div className="mt-4 px-3 py-1 bg-zinc-800 rounded-full text-[9px] font-black text-zinc-500 uppercase tracking-widest">{member.status}</div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -156,19 +163,6 @@ const About = () => {
                     <p className="text-4xl font-black text-purple-500">100%</p>
                     <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Real Support</p>
                  </div>
-              </div>
-
-              <div className="glass p-8 rounded-3xl border-zinc-800 space-y-6 bg-gradient-to-br from-blue-600/5 to-transparent">
-                <h3 className="text-xl font-black flex items-center gap-2 uppercase tracking-tight"><Award className="text-yellow-500" /> Community Recognition</h3>
-                <p className="text-zinc-400 leading-relaxed">
-                  Join a family where your success is our priority. Every student in Rashid Academy is treated as a future professional. We don't just provide signals; we build traders who can find their own setups with clarity and confidence.
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="flex -space-x-3">
-                    {[1,2,3,4,5].map(i => <div key={i} className="w-8 h-8 rounded-full border-2 border-zinc-950 bg-zinc-800" />)}
-                  </div>
-                  <p className="text-xs text-zinc-500 font-bold italic">+200 members online right now</p>
-                </div>
               </div>
             </div>
           )}

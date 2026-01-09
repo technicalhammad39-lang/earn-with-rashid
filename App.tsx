@@ -19,7 +19,8 @@ import {
   Users,
   Settings,
   BrainCircuit,
-  GraduationCap
+  GraduationCap,
+  ExternalLink
 } from 'lucide-react';
 
 import { Position, TradeHistory, User, Course, Signal, SiteSettings } from './types';
@@ -102,35 +103,38 @@ const BottomNav = ({ isAdmin }: { isAdmin: boolean }) => {
   const isActive = (path: string) => location.pathname === path;
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 glass border-t border-zinc-800/50 z-[90] flex justify-around items-center py-2 px-4 pb-safe bg-zinc-950/95 backdrop-blur-2xl">
-      <Link to="/" className={`flex flex-col items-center gap-1 transition-all ${isActive('/') ? 'text-blue-500 scale-110' : 'text-zinc-500 hover:text-zinc-300'}`}>
-        <HomeIcon size={20} />
-        <span className="text-[8px] font-black uppercase tracking-widest">Home</span>
+    <div className="fixed bottom-0 left-0 right-0 glass border-t border-zinc-800/50 z-[90] flex justify-around items-center py-3 px-4 pb-safe bg-zinc-950/95 backdrop-blur-3xl">
+      <Link to="/" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/') ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+        <HomeIcon size={28} />
+        <span className="text-[10px] font-bold uppercase tracking-widest">Home</span>
       </Link>
-      <Link to="/trading" className={`flex flex-col items-center gap-1 transition-all ${isActive('/trading') ? 'text-blue-500 scale-110' : 'text-zinc-500 hover:text-zinc-300'}`}>
-        <BarChart2 size={20} />
-        <span className="text-[8px] font-black uppercase tracking-widest">Trade</span>
+      <Link to="/trading" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/trading') ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+        <BarChart2 size={28} />
+        <span className="text-[10px] font-bold uppercase tracking-widest">Trade</span>
       </Link>
       
-      <Link to="/academy" className={`flex flex-col items-center gap-1 transition-all ${isActive('/academy') ? 'text-blue-500 scale-110' : 'text-zinc-500 hover:text-zinc-300'}`}>
-        <GraduationCap size={20} />
-        <span className="text-[8px] font-black uppercase tracking-widest">Learn</span>
+      {/* HIGHLIGHTED LEARN BUTTON - ALIGNED & PROPERLY SIZED */}
+      <Link to="/academy" className={`flex flex-col items-center gap-1.5 transition-all flex-1`}>
+        <div className={`p-2.5 rounded-full bg-blue-600/10 shadow-[0_0_20px_rgba(59,130,246,0.3)] border border-blue-500/20 transition-all duration-300 ${isActive('/academy') ? 'bg-blue-600/25 shadow-[0_0_30px_rgba(59,130,246,0.5)] scale-110' : ''}`}>
+          <GraduationCap size={28} className="text-blue-400" strokeWidth={2.5} />
+        </div>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">Learn</span>
       </Link>
 
-      <Link to="/signals" className={`flex flex-col items-center gap-1 transition-all ${isActive('/signals') ? 'text-blue-500 scale-110' : 'text-zinc-500 hover:text-zinc-300'}`}>
-        <Target size={20} />
-        <span className="text-[8px] font-black uppercase tracking-widest">Signals</span>
+      <Link to="/signals" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/signals') ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+        <Target size={28} />
+        <span className="text-[10px] font-bold uppercase tracking-widest">Signals</span>
       </Link>
 
-      <Link to="/dashboard" className={`flex flex-col items-center gap-1 transition-all ${isActive('/dashboard') ? 'text-blue-500 scale-110' : 'text-zinc-500 hover:text-zinc-300'}`}>
-        <LayoutDashboard size={20} />
-        <span className="text-[8px] font-black uppercase tracking-widest">Status</span>
+      <Link to="/dashboard" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/dashboard') ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+        <LayoutDashboard size={28} />
+        <span className="text-[10px] font-bold uppercase tracking-widest">Status</span>
       </Link>
 
       {isAdmin && (
-        <Link to="/admin" className={`flex flex-col items-center gap-1 transition-all ${isActive('/admin') ? 'text-purple-500 scale-110' : 'text-zinc-500 hover:text-zinc-300'}`}>
-          <Settings size={20} />
-          <span className="text-[8px] font-black uppercase tracking-widest">Admin</span>
+        <Link to="/admin" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/admin') ? 'text-purple-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+          <Settings size={28} />
+          <span className="text-[10px] font-bold uppercase tracking-widest">Admin</span>
         </Link>
       )}
     </div>
@@ -146,7 +150,7 @@ const Header = ({ user, menuOpen, setMenuOpen, settings }: { user: User | null, 
         </button>
         <div className="flex items-center gap-2">
           <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 rounded object-cover shadow-lg" />
-          <span className="font-black text-sm tracking-tight hidden xs:block">{settings.brandName}</span>
+          <span className="font-bold text-sm tracking-tight hidden xs:block">{settings.brandName}</span>
         </div>
       </div>
       <div className="flex items-center gap-3">
@@ -177,7 +181,7 @@ const HamburgerMenu = ({ open, setOpen }: { open: boolean, setOpen: (v: boolean)
         <div className="flex items-center justify-between mb-10">
            <div className="flex items-center gap-2">
             <img src={LOGO_URL} className="w-8 h-8 rounded" alt="Logo" />
-            <span className="font-black text-sm tracking-tight">Main Menu</span>
+            <span className="font-bold text-sm tracking-tight">Main Menu</span>
           </div>
           <button onClick={() => setOpen(false)} className="p-2 text-zinc-500 hover:text-white transition-colors">
             <X size={24} />
@@ -259,16 +263,20 @@ const App = () => {
           </div>
           <footer className="w-full border-t border-zinc-800/50 p-10 flex flex-col items-center gap-10 mt-auto bg-zinc-950/80">
             <div className="flex flex-wrap justify-center gap-10">
-              <a href="https://youtube.com/@earnwithrashid" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-red-500 flex flex-col items-center gap-2"><Youtube size={24} /><span className="text-[9px] font-black uppercase tracking-widest">YouTube</span></a>
-              <a href="https://t.me/earnwithrashidchannel" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-blue-400 flex flex-col items-center gap-2"><Telegram size={24} /><span className="text-[9px] font-black uppercase tracking-widest">Telegram</span></a>
-              <a href="https://tiktok.com/@EarnwithRashid" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-white flex flex-col items-center gap-2"><TikTok size={24} /><span className="text-[9px] font-black uppercase tracking-widest">TikTok</span></a>
-              <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-green-500 flex flex-col items-center gap-2"><WhatsApp size={24} /><span className="text-[9px] font-black uppercase tracking-widest">WhatsApp</span></a>
+              <a href="https://youtube.com/@earnwithrashid" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-red-500 flex flex-col items-center gap-2"><Youtube size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">YouTube</span></a>
+              <a href="https://t.me/earnwithrashidchannel" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-blue-400 flex flex-col items-center gap-2"><Telegram size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">Telegram</span></a>
+              <a href="https://tiktok.com/@EarnwithRashid" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-white flex flex-col items-center gap-2"><TikTok size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">TikTok</span></a>
+              <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-green-500 flex flex-col items-center gap-2"><WhatsApp size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">WhatsApp</span></a>
             </div>
-            <p className="text-zinc-400 text-sm font-medium">© Copyright {settings.brandName} – All Rights Reserved</p>
+            <div className="flex flex-col items-center gap-2 text-center">
+              <p className="text-zinc-400 text-sm font-medium">© Copyright {settings.brandName} – All Rights Reserved</p>
+              <a href="https://maps.app.goo.gl/3XyVv8Jk8vXv5zXN8" target="_blank" rel="noopener noreferrer" className="text-[10px] text-zinc-600 hover:text-blue-500 font-bold uppercase tracking-widest flex items-center gap-1">
+                Developed by Hammad – Clyro Tech Solutions <ExternalLink size={10} />
+              </a>
+            </div>
           </footer>
         </main>
         
-        {/* Floating Draggable Shortcut Icons (Link Only) */}
         <div className="fixed inset-0 z-[100] pointer-events-none">
           <CommunityWidget />
           <AIMentorWidget />
