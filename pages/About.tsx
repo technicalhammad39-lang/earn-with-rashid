@@ -123,7 +123,7 @@ const About = () => {
                     role: 'Development Agency', 
                     status: 'Tech Partner', 
                     img: 'https://i.ibb.co/hR99H2Wv/logo-rashid.png',
-                    link: 'https://maps.app.goo.gl/3XyVv8Jk8vXv5zXN8'
+                    link: 'https://share.google/T63RVhOi5wxuOh6UN'
                   },
                 ].map(member => (
                   <div key={member.name} className="p-8 rounded-3xl bg-zinc-900/50 border border-zinc-800 flex flex-col items-center text-center group hover:bg-zinc-900 transition-all shadow-xl">

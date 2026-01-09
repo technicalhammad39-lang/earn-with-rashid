@@ -270,7 +270,7 @@ const App = () => {
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
               <p className="text-zinc-400 text-sm font-medium">© Copyright {settings.brandName} – All Rights Reserved</p>
-              <a href="https://maps.app.goo.gl/3XyVv8Jk8vXv5zXN8" target="_blank" rel="noopener noreferrer" className="text-[10px] text-zinc-600 hover:text-blue-500 font-bold uppercase tracking-widest flex items-center gap-1">
+              <a href="https://share.google/T63RVhOi5wxuOh6UN" target="_blank" rel="noopener noreferrer" className="text-[10px] text-zinc-600 hover:text-blue-500 font-bold uppercase tracking-widest flex items-center gap-1">
                 Developed by Hammad – Clyro Tech Solutions <ExternalLink size={10} />
               </a>
             </div>

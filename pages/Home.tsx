@@ -131,7 +131,7 @@ const Home = ({ settings }: { settings: SiteSettings }) => {
       <section className="py-20 border-t border-zinc-800/50 text-center">
          <p className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.4em] mb-4">Masterpiece Engineered By</p>
          <a 
-           href="https://maps.app.goo.gl/3XyVv8Jk8vXv5zXN8" 
+           href="https://share.google/T63RVhOi5wxuOh6UN" 
            target="_blank" 
            rel="noopener noreferrer"
            className="group inline-flex items-center gap-3 px-8 py-4 bg-zinc-900 border border-zinc-800 rounded-3xl hover:border-blue-500 transition-all duration-500 shadow-2xl"

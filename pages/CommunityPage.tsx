@@ -203,7 +203,7 @@ const CommunityPage: React.FC<{ user: User }> = ({ user }) => {
            <div className="p-8 bg-zinc-900/50 border border-zinc-800 rounded-[2.5rem] text-center space-y-4">
               <p className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Infrastructure Support</p>
               <a 
-                href="https://maps.app.goo.gl/3XyVv8Jk8vXv5zXN8" 
+                href="https://share.google/T63RVhOi5wxuOh6UN" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="group flex flex-col items-center gap-2"
