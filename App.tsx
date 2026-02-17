@@ -20,7 +20,9 @@ import {
   Settings,
   BrainCircuit,
   GraduationCap,
-  ExternalLink
+  ExternalLink,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 import { Position, TradeHistory, User, Course, Signal, SiteSettings } from './types';
@@ -103,36 +105,35 @@ const BottomNav = ({ isAdmin }: { isAdmin: boolean }) => {
   const isActive = (path: string) => location.pathname === path;
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 glass border-t border-zinc-800/50 z-[90] flex justify-around items-center py-3 px-4 pb-safe bg-zinc-950/95 backdrop-blur-3xl">
-      <Link to="/" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/') ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+    <div className="fixed bottom-0 left-0 right-0 glass border-t border-zinc-200 dark:border-zinc-800/50 z-[90] flex justify-around items-center py-3 px-4 pb-safe bg-white/95 dark:bg-zinc-950/95 backdrop-blur-3xl">
+      <Link to="/" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/') ? 'text-blue-500' : 'text-zinc-500 hover:text-blue-500'}`}>
         <HomeIcon size={28} />
         <span className="text-[10px] font-bold uppercase tracking-widest">Home</span>
       </Link>
-      <Link to="/trading" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/trading') ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+      <Link to="/trading" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/trading') ? 'text-blue-500' : 'text-zinc-500 hover:text-blue-500'}`}>
         <BarChart2 size={28} />
         <span className="text-[10px] font-bold uppercase tracking-widest">Trade</span>
       </Link>
       
-      {/* HIGHLIGHTED LEARN BUTTON - ALIGNED & PROPERLY SIZED */}
       <Link to="/academy" className={`flex flex-col items-center gap-1.5 transition-all flex-1`}>
         <div className={`p-2.5 rounded-full bg-blue-600/10 shadow-[0_0_20px_rgba(59,130,246,0.3)] border border-blue-500/20 transition-all duration-300 ${isActive('/academy') ? 'bg-blue-600/25 shadow-[0_0_30px_rgba(59,130,246,0.5)] scale-110' : ''}`}>
-          <GraduationCap size={28} className="text-blue-400" strokeWidth={2.5} />
+          <GraduationCap size={28} className="text-blue-500" strokeWidth={2.5} />
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">Learn</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Learn</span>
       </Link>
 
-      <Link to="/signals" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/signals') ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+      <Link to="/signals" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/signals') ? 'text-blue-500' : 'text-zinc-500 hover:text-blue-500'}`}>
         <Target size={28} />
         <span className="text-[10px] font-bold uppercase tracking-widest">Signals</span>
       </Link>
 
-      <Link to="/dashboard" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/dashboard') ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+      <Link to="/dashboard" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/dashboard') ? 'text-blue-500' : 'text-zinc-500 hover:text-blue-500'}`}>
         <LayoutDashboard size={28} />
         <span className="text-[10px] font-bold uppercase tracking-widest">Status</span>
       </Link>
 
       {isAdmin && (
-        <Link to="/admin" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/admin') ? 'text-purple-500' : 'text-zinc-500 hover:text-zinc-300'}`}>
+        <Link to="/admin" className={`flex flex-col items-center gap-1.5 transition-all flex-1 ${isActive('/admin') ? 'text-purple-500' : 'text-zinc-500 hover:text-purple-500'}`}>
           <Settings size={28} />
           <span className="text-[10px] font-bold uppercase tracking-widest">Admin</span>
         </Link>
@@ -141,26 +142,33 @@ const BottomNav = ({ isAdmin }: { isAdmin: boolean }) => {
   );
 };
 
-const Header = ({ user, menuOpen, setMenuOpen, settings }: { user: User | null, menuOpen: boolean, setMenuOpen: (v: boolean) => void, settings: SiteSettings }) => {
+const Header = ({ user, menuOpen, setMenuOpen, settings, isDarkMode, toggleTheme }: { user: User | null, menuOpen: boolean, setMenuOpen: (v: boolean) => void, settings: SiteSettings, isDarkMode: boolean, toggleTheme: () => void }) => {
   return (
-    <header className="glass border-b border-zinc-800/50 p-4 sticky top-0 z-[80] flex items-center justify-between bg-zinc-950/80 backdrop-blur-xl">
+    <header className="glass border-b border-zinc-200 dark:border-zinc-800/50 p-4 sticky top-0 z-[80] flex items-center justify-between bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl">
       <div className="flex items-center gap-3">
-        <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 -ml-2 text-zinc-400 hover:text-white transition-colors">
+        <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 -ml-2 text-zinc-500 dark:text-zinc-400 hover:text-blue-500 transition-colors">
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         <div className="flex items-center gap-2">
           <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 rounded object-cover shadow-lg" />
-          <span className="font-bold text-sm tracking-tight hidden xs:block">{settings.brandName}</span>
+          <span className="font-bold text-sm tracking-tight hidden xs:block text-zinc-900 dark:text-zinc-100">{settings.brandName}</span>
         </div>
       </div>
-      <div className="flex items-center gap-3">
-         <Link to="/dashboard" className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center overflow-hidden shadow-inner">
-            {user?.profilePic ? (
-              <img src={user.profilePic} className="w-full h-full object-cover" alt="Profile" />
-            ) : (
-              <UserIcon size={16} className="text-zinc-500" />
-            )}
-         </Link>
+      <div className="flex items-center gap-2">
+        <button 
+          onClick={toggleTheme}
+          className="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-blue-500 dark:hover:text-blue-400 transition-all border border-zinc-200 dark:border-zinc-800"
+          title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        >
+          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+        <Link to="/dashboard" className="w-9 h-9 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center overflow-hidden shadow-inner ml-1">
+          {user?.profilePic ? (
+            <img src={user.profilePic} className="w-full h-full object-cover" alt="Profile" />
+          ) : (
+            <UserIcon size={18} className="text-zinc-500" />
+          )}
+        </Link>
       </div>
     </header>
   );
@@ -177,19 +185,19 @@ const HamburgerMenu = ({ open, setOpen }: { open: boolean, setOpen: (v: boolean)
   ];
   return (
     <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-[80%] max-sm max-w-sm h-full bg-zinc-950 border-r border-zinc-800 p-6 flex flex-col animate-in slide-in-from-left-4">
+      <div className="w-[80%] max-sm max-w-sm h-full bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 p-6 flex flex-col animate-in slide-in-from-left-4">
         <div className="flex items-center justify-between mb-10">
            <div className="flex items-center gap-2">
             <img src={LOGO_URL} className="w-8 h-8 rounded" alt="Logo" />
-            <span className="font-bold text-sm tracking-tight">Main Menu</span>
+            <span className="font-bold text-sm tracking-tight text-zinc-900 dark:text-zinc-100">Main Menu</span>
           </div>
-          <button onClick={() => setOpen(false)} className="p-2 text-zinc-500 hover:text-white transition-colors">
+          <button onClick={() => setOpen(false)} className="p-2 text-zinc-500 hover:text-blue-500 transition-colors">
             <X size={24} />
           </button>
         </div>
         <div className="space-y-2 flex-1">
           {menuItems.map((item, idx) => (
-            <Link key={idx} to={item.path} onClick={() => setOpen(false)} className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 hover:bg-zinc-900 border border-transparent hover:border-zinc-800 transition-all text-zinc-400 hover:text-white group">
+            <Link key={idx} to={item.path} onClick={() => setOpen(false)} className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-900 border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 transition-all text-zinc-600 dark:text-zinc-400 hover:text-blue-500 group">
               <item.icon size={20} className="group-hover:text-blue-500 transition-colors" />
               <span className="font-bold text-sm">{item.label}</span>
             </Link>
@@ -204,6 +212,10 @@ const App = () => {
   const [user, setUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('er_user');
     return saved ? JSON.parse(saved) : null;
+  });
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('er_theme');
+    return saved ? saved === 'dark' : true; // Default to dark mode
   });
   const [settings, setSettings] = useState<SiteSettings>(() => {
     const saved = localStorage.getItem('er_site_settings');
@@ -226,6 +238,15 @@ const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('er_theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
+
+  useEffect(() => {
     if (user) {
       localStorage.setItem('er_user', JSON.stringify(user));
       localStorage.setItem('er_balance', balance.toString());
@@ -237,21 +258,30 @@ const App = () => {
     }
   }, [balance, positions, history, user, settings, courses, signals]);
 
+  const toggleTheme = () => setIsDarkMode(prev => !prev);
+
   if (!user) return <Auth onAuth={setUser} />;
 
   return (
     <Router>
-      <div className="flex h-screen overflow-hidden bg-zinc-950 selection:bg-blue-500/30">
+      <div className="flex h-screen overflow-hidden bg-white dark:bg-zinc-950 selection:bg-blue-500/30">
         <HamburgerMenu open={menuOpen} setOpen={setMenuOpen} />
         <main className="flex-1 overflow-y-auto pb-24 relative flex flex-col">
-          <Header user={user} menuOpen={menuOpen} setMenuOpen={setMenuOpen} settings={settings} />
+          <Header 
+            user={user} 
+            menuOpen={menuOpen} 
+            setMenuOpen={setMenuOpen} 
+            settings={settings} 
+            isDarkMode={isDarkMode} 
+            toggleTheme={toggleTheme} 
+          />
           <div className="max-w-7xl mx-auto w-full p-4 md:p-8 flex-grow">
             <Routes>
               <Route path="/" element={<Home settings={settings} />} />
               <Route path="/trading" element={<Trading balance={balance} setBalance={setBalance} positions={positions} setPositions={setPositions} history={history} setHistory={setHistory} />} />
               <Route path="/academy" element={<Academy courses={courses} settings={settings} />} />
               <Route path="/academy/:courseId" element={<CourseDetail user={user} setUser={setUser} courses={courses} />} />
-              <Route path="/dashboard" element={<Dashboard balance={balance} positions={positions} history={history} user={user} setUser={setUser} />} />
+              <Route path="/dashboard" element={<Dashboard balance={balance} positions={positions} history={history} user={user} setUser={setUser} isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
               <Route path="/signals" element={<Signals signals={signals} />} />
               <Route path="/community" element={<CommunityPage user={user} />} />
               <Route path="/mentor" element={<MentorPage />} />
@@ -261,16 +291,16 @@ const App = () => {
               <Route path="/admin" element={<Admin user={user} setSettings={setSettings} settings={settings} courses={courses} setCourses={setCourses} signals={signals} setSignals={setSignals} />} />
             </Routes>
           </div>
-          <footer className="w-full border-t border-zinc-800/50 p-10 flex flex-col items-center gap-10 mt-auto bg-zinc-950/80">
+          <footer className="w-full border-t border-zinc-200 dark:border-zinc-800/50 p-10 flex flex-col items-center gap-10 mt-auto bg-zinc-50 dark:bg-zinc-950/80">
             <div className="flex flex-wrap justify-center gap-10">
-              <a href="https://youtube.com/@earnwithrashid" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-red-500 flex flex-col items-center gap-2"><Youtube size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">YouTube</span></a>
-              <a href="https://t.me/earnwithrashidchannel" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-blue-400 flex flex-col items-center gap-2"><Telegram size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">Telegram</span></a>
-              <a href="https://tiktok.com/@EarnwithRashid" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-white flex flex-col items-center gap-2"><TikTok size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">TikTok</span></a>
-              <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="text-zinc-500 hover:text-green-500 flex flex-col items-center gap-2"><WhatsApp size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">WhatsApp</span></a>
+              <a href="https://youtube.com/@earnwithrashid" target="_blank" rel="noreferrer" className="text-zinc-400 dark:text-zinc-500 hover:text-red-500 flex flex-col items-center gap-2 transition-colors"><Youtube size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">YouTube</span></a>
+              <a href="https://t.me/earnwithrashidchannel" target="_blank" rel="noreferrer" className="text-zinc-400 dark:text-zinc-500 hover:text-blue-400 flex flex-col items-center gap-2 transition-colors"><Telegram size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">Telegram</span></a>
+              <a href="https://tiktok.com/@EarnwithRashid" target="_blank" rel="noreferrer" className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white flex flex-col items-center gap-2 transition-colors"><TikTok size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">TikTok</span></a>
+              <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="text-zinc-400 dark:text-zinc-500 hover:text-green-500 flex flex-col items-center gap-2 transition-colors"><WhatsApp size={24} /><span className="text-[10px] font-bold uppercase tracking-widest">WhatsApp</span></a>
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <p className="text-zinc-400 text-sm font-medium">© Copyright {settings.brandName} – All Rights Reserved</p>
-              <a href="https://share.google/T63RVhOi5wxuOh6UN" target="_blank" rel="noopener noreferrer" className="text-[10px] text-zinc-600 hover:text-blue-500 font-bold uppercase tracking-widest flex items-center gap-1">
+              <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">© Copyright {settings.brandName} – All Rights Reserved</p>
+              <a href="https://share.google/T63RVhOi5wxuOh6UN" target="_blank" rel="noopener noreferrer" className="text-[10px] text-zinc-400 dark:text-zinc-600 hover:text-blue-500 font-bold uppercase tracking-widest flex items-center gap-1 transition-colors">
                 Developed by Hammad – Clyro Tech Solutions <ExternalLink size={10} />
               </a>
             </div>

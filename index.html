@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,30 +13,51 @@
     <style>
       body {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: #09090b;
-        color: #fafafa;
         margin: 0;
         overflow-x: hidden;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
+      
+      /* Base light mode */
+      body {
+        background-color: #ffffff;
+        color: #09090b;
+      }
+      
+      /* Dark mode override */
+      .dark body {
+        background-color: #09090b;
+        color: #fafafa;
+      }
+
       ::-webkit-scrollbar {
         width: 6px;
       }
       ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .dark ::-webkit-scrollbar-track {
         background: #09090b;
       }
       ::-webkit-scrollbar-thumb {
-        background: #27272a;
+        background: #d4d4d8;
         border-radius: 10px;
       }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #27272a;
+      }
+
       .glass {
-        background: rgba(24, 24, 27, 0.7);
+        background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+      }
+      .dark .glass {
+        background: rgba(24, 24, 27, 0.7);
         border: 1px solid rgba(255, 255, 255, 0.08);
       }
-      .active-nav {
-        color: #3b82f6;
-      }
+
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -81,7 +102,6 @@
     <div id="root"></div>
     <script type="module" src="index.tsx"></script>
     <script>
-      // Simple intersection observer for scroll reveals
       document.addEventListener('DOMContentLoaded', () => {
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
@@ -97,7 +117,6 @@
           });
         };
         
-        // Check periodically for dynamically rendered React elements
         setInterval(checkElements, 1000);
       });
     </script>
